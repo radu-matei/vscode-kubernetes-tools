@@ -54,6 +54,7 @@
         "onCommand:extension.helmInspectValues",
         "onCommand:extension.draftVersion",
         "onCommand:extension.draftCreate",
+        "onCommand:extension.draftDebug",
         "onCommand:extension.draftUp",
         "onView:extension.vsKubernetesExplorer",
         "onLanguage:helm"
@@ -364,6 +365,12 @@
                 "command": "extension.draftVersion",
                 "title": "Version",
                 "description": "Get the version of the local Draft client.",
+                "category": "Draft"
+            },
+            {
+                "command": "extension.draftDebug",
+                "title": "Debug",
+                "description": "Start a debugging session.",
                 "category": "Draft"
             },
             {

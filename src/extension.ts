@@ -40,6 +40,8 @@ import { HelmTemplateCompletionProvider } from './helm.completionProvider';
 import { Reporter } from './telemetry';
 import * as telemetry from './telemetry-helper';
 import {dashboardKubernetes} from './components/kubectl/proxy';
+import { worker } from 'cluster';
+import { sleep } from './sleep';
 
 let explainActive = false;
 let swaggerSpecPromise = null;
@@ -126,6 +128,7 @@ export function activate(context) {
         // Commands - Draft
         registerCommand('extension.draftVersion', execDraftVersion),
         registerCommand('extension.draftCreate', execDraftCreate),
+        registerCommand('extension.draftDebug', execDraftDebug),
         registerCommand('extension.draftUp', execDraftUp),
 
         // HTML renderers
@@ -1468,6 +1471,30 @@ function draftCreateResult(sr : ShellResult, hadPack : boolean) {
         return DraftCreateResult.NeedsPack;
     }
     return DraftCreateResult.Fatal;
+}
+
+async function execDraftDebug(){
+    vscode.window.showInformationMessage('Trying to execute draft debug.');
+
+    execDraftConnect()
+    let f = vscode.workspace.workspaceFolders[0]
+    
+    await sleep(4000)
+    vscode.debug.startDebugging(f, "Attach to remote").then()
+    return
+}
+
+async function execDraftConnect(){
+    if (vscode.workspace.rootPath === undefined) {
+        vscode.window.showErrorMessage('This command requires an open folder.');
+        return;
+    }
+    if (!draft.isFolderMapped(vscode.workspace.rootPath)) {
+        vscode.window.showInformationMessage('This folder is not configured for draft. Run draft create to configure it.');
+        return;
+    }
+
+    const connectResult = await draft.invoke("connect");
 }
 
 async function execDraftUp() {
